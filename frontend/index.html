@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShopSphere - Premium electronics and lifestyle products, delivered across India.">
+    <meta name="theme-color" content="#14213d">
+    <title>ShopSphere - Premium Online Shopping</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet (we create this in Day 2) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- ===== Announcement bar ===== -->
+    <div class="announcement" role="region" aria-label="Offers">
+        <p>Free delivery on orders above ₹999 &nbsp;|&nbsp; Easy 7-day returns</p>
+    </div>
+
+    <!-- ===== Header ===== -->
+    <header class="header" id="header">
+        <div class="container header__inner">
+
+            <a href="index.html" class="logo" aria-label="ShopSphere home">
+                <svg class="logo__mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+                    <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <ellipse cx="14" cy="14" rx="5" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="logo__text">ShopSphere</span>
+            </a>
+
+            <nav class="nav" id="nav" aria-label="Main navigation">
+                <ul class="nav__list">
+                    <li><a href="#home" class="nav__link is-active">Home</a></li>
+                    <li><a href="#categories" class="nav__link">Categories</a></li>
+                    <li><a href="#products" class="nav__link">Products</a></li>
+                    <li><a href="#offers" class="nav__link">Offers</a></li>
+                    <li><a href="#contact" class="nav__link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header__actions">
+                <button class="icon-btn" id="searchToggle" aria-label="Search products" aria-expanded="false" aria-controls="searchPanel">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                </button>
+
+                <a href="login.html" class="icon-btn" aria-label="Login or register">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                </a>
+
+                <button class="icon-btn cart-btn" id="cartToggle" aria-label="Open cart" aria-controls="cartDrawer" aria-expanded="false">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+                    <span class="cart-btn__count" id="cartCount">0</span>
+                </button>
+
+                <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search panel (slides down) -->
+        <div class="search-panel" id="searchPanel" hidden>
+            <div class="container">
+                <form class="search-form" role="search" action="#">
+                    <label for="searchInput" class="visually-hidden">Search products</label>
+                    <input type="search" id="searchInput" placeholder="Search headphones, watches, speakers" autocomplete="off">
+                    <button type="submit" class="btn btn--dark">Search</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+
+        <!-- ===== Hero ===== -->
+        <section class="hero" id="home" aria-labelledby="hero-title">
+            <div class="container hero__inner">
+
+                <div class="hero__content">
+                    <p class="hero__tag">New season collection</p>
+                    <h1 class="hero__title" id="hero-title">
+                        <span class="line"><span>Sound, time and style,</span></span>
+                        <span class="line"><span>made to be noticed.</span></span>
+                    </h1>
+                    <p class="hero__text">
+                        Premium headphones, smartwatches and speakers from trusted brands.
+                        Fast delivery, secure payments and simple returns.
+                    </p>
+                    <div class="hero__buttons">
+                        <a href="#products" class="btn btn--primary">Shop now</a>
+                        <a href="#categories" class="btn btn--ghost">Browse categories</a>
+                    </div>
+
+                    <ul class="hero__stats">
+                        <li><strong data-count="25000">25,000+</strong><span>Happy customers</span></li>
+                        <li><strong data-count="1200">1,200+</strong><span>Products</span></li>
+                        <li><strong>4.8</strong><span>Average rating</span></li>
+                    </ul>
+                </div>
+
+                <div class="hero__visual">
+                    <div class="hero__image-wrap">
+                        <img src="images/hero-headphones.jpg" alt="Premium wireless headphones in matte black" width="640" height="720" fetchpriority="high">
+                    </div>
+                    <div class="hero__float hero__float--one">
+                        <span class="hero__float-label">Wireless Headphones</span>
+                        <span class="hero__float-price">₹1,499</span>
+                    </div>
+                    <div class="hero__float hero__float--two">
+                        <span class="hero__float-label">Rated 4.8 by 3,200 buyers</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== Trust strip ===== -->
+        <section class="trust" aria-label="Our promises">
+            <div class="container">
+                <ul class="trust__list">
+                    <li class="trust__item">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>
+                        <div><h3>Free shipping</h3><p>On orders above ₹999</p></div>
+                    </li>
+                    <li class="trust__item">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                        <div><h3>Secure payments</h3><p>100% protected checkout</p></div>
+                    </li>
+                    <li class="trust__item">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>
+                        <div><h3>Easy returns</h3><p>7-day return policy</p></div>
+                    </li>
+                    <li class="trust__item">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>
+                        <div><h3>Friendly support</h3><p>Help when you need it</p></div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== Categories ===== -->
+        <section class="section" id="categories" aria-labelledby="categories-title">
+            <div class="container">
+                <header class="section__head">
+                    <h2 class="section__title" id="categories-title">Shop by category</h2>
+                    <a href="#products" class="link-arrow">View all products</a>
+                </header>
+
+                <div class="categories">
+                    <a href="#products" class="category category--large" data-category="audio">
+                        <img src="images/cat-audio.jpg" alt="" loading="lazy" width="600" height="600">
+                        <div class="category__info">
+                            <h3>Audio</h3>
+                            <p>Headphones, earbuds and speakers</p>
+                        </div>
+                    </a>
+                    <a href="#products" class="category" data-category="wearables">
+                        <img src="images/cat-wearables.jpg" alt="" loading="lazy" width="400" height="300">
+                        <div class="category__info">
+                            <h3>Wearables</h3>
+                            <p>Smartwatches and bands</p>
+                        </div>
+                    </a>
+                    <a href="#products" class="category" data-category="accessories">
+                        <img src="images/cat-accessories.jpg" alt="" loading="lazy" width="400" height="300">
+                        <div class="category__info">
+                            <h3>Accessories</h3>
+                            <p>Chargers, cables and cases</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Featured products ===== -->
+        <section class="section section--tinted" id="products" aria-labelledby="products-title">
+            <div class="container">
+                <header class="section__head">
+                    <h2 class="section__title" id="products-title">Featured products</h2>
+
+                    <div class="filters" role="group" aria-label="Filter products">
+                        <button class="filter is-active" data-filter="all">All</button>
+                        <button class="filter" data-filter="audio">Audio</button>
+                        <button class="filter" data-filter="wearables">Wearables</button>
+                        <button class="filter" data-filter="accessories">Accessories</button>
+                    </div>
+                </header>
+
+                <div class="product-grid" id="productGrid">
+
+                    <!-- Product card -->
+                    <article class="product" data-category="audio" data-id="1">
+                        <div class="product__media">
+                            <span class="badge badge--sale">-25%</span>
+                            <button class="wishlist" aria-label="Add Wireless Headphones to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/headphones.jpg" alt="Wireless Headphones" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Audio</p>
+                            <h3 class="product__name">Wireless Headphones</h3>
+                            <div class="rating" aria-label="Rated 4.7 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(1,284)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹1,499</span>
+                                <s class="price price--old">₹1,999</s>
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="product" data-category="wearables" data-id="2">
+                        <div class="product__media">
+                            <span class="badge badge--new">New</span>
+                            <button class="wishlist" aria-label="Add Smart Watch to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/smartwatch.jpg" alt="Smart Watch" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Wearables</p>
+                            <h3 class="product__name">Smart Watch</h3>
+                            <div class="rating" aria-label="Rated 4.5 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(932)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹2,499</span>
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="product" data-category="audio" data-id="3">
+                        <div class="product__media">
+                            <button class="wishlist" aria-label="Add Bluetooth Speaker to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/speaker.jpg" alt="Bluetooth Speaker" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Audio</p>
+                            <h3 class="product__name">Bluetooth Speaker</h3>
+                            <div class="rating" aria-label="Rated 4.6 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(2,108)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹999</span>
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="product" data-category="audio" data-id="4">
+                        <div class="product__media">
+                            <span class="badge badge--sale">-15%</span>
+                            <button class="wishlist" aria-label="Add Wireless Earbuds to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/earbuds.jpg" alt="Wireless Earbuds" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Audio</p>
+                            <h3 class="product__name">Wireless Earbuds</h3>
+                            <div class="rating" aria-label="Rated 4.4 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(764)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹1,299</span>
+                                <s class="price price--old">₹1,529</s>
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="product" data-category="accessories" data-id="5">
+                        <div class="product__media">
+                            <button class="wishlist" aria-label="Add Fast Charger to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/charger.jpg" alt="Fast Charger" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Accessories</p>
+                            <h3 class="product__name">Fast Charger 33W</h3>
+                            <div class="rating" aria-label="Rated 4.3 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(1,562)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹599</span>
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="product" data-category="wearables" data-id="6">
+                        <div class="product__media">
+                            <span class="badge badge--new">New</span>
+                            <button class="wishlist" aria-label="Add Fitness Band to wishlist" aria-pressed="false">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>
+                            </button>
+                            <img src="images/fitness-band.jpg" alt="Fitness Band" loading="lazy" width="400" height="400">
+                            <button class="btn btn--primary product__quick" data-add>Add to cart</button>
+                        </div>
+                        <div class="product__body">
+                            <p class="product__category">Wearables</p>
+                            <h3 class="product__name">Fitness Band</h3>
+                            <div class="rating" aria-label="Rated 4.5 out of 5">
+                                <span class="rating__stars" aria-hidden="true">★★★★★</span>
+                                <span class="rating__count">(418)</span>
+                            </div>
+                            <p class="product__price">
+                                <span class="price">₹1,799</span>
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="section__footer">
+                    <a href="products.html" class="btn btn--outline">See all products</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Offer banner ===== -->
+        <section class="offer" id="offers" aria-labelledby="offer-title">
+            <div class="container offer__inner">
+                <div class="offer__content">
+                    <h2 id="offer-title">Festive sale: up to 40% off on audio</h2>
+                    <p>Limited-time prices on headphones, earbuds and speakers.</p>
+
+                    <div class="countdown" id="countdown" role="timer" aria-label="Time left in sale">
+                        <div class="countdown__box"><span id="cdDays">00</span><small>Days</small></div>
+                        <div class="countdown__box"><span id="cdHours">00</span><small>Hours</small></div>
+                        <div class="countdown__box"><span id="cdMins">00</span><small>Minutes</small></div>
+                        <div class="countdown__box"><span id="cdSecs">00</span><small>Seconds</small></div>
+                    </div>
+
+                    <a href="#products" class="btn btn--light">Grab the deal</a>
+                </div>
+                <div class="offer__image">
+                    <img src="images/offer.jpg" alt="Assorted audio products on sale" loading="lazy" width="520" height="420">
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Testimonials ===== -->
+        <section class="section" aria-labelledby="reviews-title">
+            <div class="container">
+                <header class="section__head">
+                    <h2 class="section__title" id="reviews-title">What our customers say</h2>
+                </header>
+
+                <div class="reviews">
+                    <figure class="review">
+                        <blockquote>
+                            <p>Delivered in two days and the sound quality is far better than I expected at this price.</p>
+                        </blockquote>
+                        <figcaption>
+                            <img src="images/user-1.jpg" alt="" width="44" height="44" loading="lazy">
+                            <div><strong>Aarav Patil</strong><span>Kolhapur</span></div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="review">
+                        <blockquote>
+                            <p>The packaging was neat and the return process was painless when I needed a different size.</p>
+                        </blockquote>
+                        <figcaption>
+                            <img src="images/user-2.jpg" alt="" width="44" height="44" loading="lazy">
+                            <div><strong>Sneha Deshmukh</strong><span>Pune</span></div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="review">
+                        <blockquote>
+                            <p>Good prices, genuine products and support that actually replies. I now order everything here.</p>
+                        </blockquote>
+                        <figcaption>
+                            <img src="images/user-3.jpg" alt="" width="44" height="44" loading="lazy">
+                            <div><strong>Rohan Jadhav</strong><span>Mumbai</span></div>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Newsletter ===== -->
+        <section class="newsletter" aria-labelledby="news-title">
+            <div class="container newsletter__inner">
+                <div>
+                    <h2 id="news-title">Get 10% off your first order</h2>
+                    <p>Join our mailing list for new arrivals and members-only offers.</p>
+                </div>
+                <form class="newsletter__form" id="newsletterForm" novalidate>
+                    <label for="newsletterEmail" class="visually-hidden">Email address</label>
+                    <input type="email" id="newsletterEmail" name="email" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn--primary">Subscribe</button>
+                    <p class="form-message" id="newsletterMessage" aria-live="polite"></p>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer" id="contact">
+        <div class="container footer__grid">
+
+            <div class="footer__brand">
+                <a href="index.html" class="logo logo--light" aria-label="ShopSphere home">
+                    <svg class="logo__mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+                        <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <ellipse cx="14" cy="14" rx="5" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="logo__text">ShopSphere</span>
+                </a>
+                <p>Quality products, honest prices and service you can rely on.</p>
+            </div>
+
+            <nav class="footer__col" aria-label="Shop links">
+                <h3>Shop</h3>
+                <ul>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#products">Featured products</a></li>
+                    <li><a href="#offers">Offers</a></li>
+                </ul>
+            </nav>
+
+            <nav class="footer__col" aria-label="Help links">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">Track your order</a></li>
+                    <li><a href="#">Shipping information</a></li>
+                    <li><a href="#">Returns and refunds</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </nav>
+
+            <div class="footer__col">
+                <h3>Contact</h3>
+                <address>
+                    <p>Kolhapur, Maharashtra, India</p>
+                    <p><a href="mailto:support@shopsphere.com">support@shopsphere.com</a></p>
+                    <p><a href="tel:+910000000000">+91 00000 00000</a></p>
+                </address>
+            </div>
+
+        </div>
+
+        <div class="footer__bottom">
+            <div class="container footer__bottom-inner">
+                <p>© 2026 ShopSphere. All rights reserved.</p>
+                <ul>
+                    <li><a href="#">Privacy policy</a></li>
+                    <li><a href="#">Terms of service</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== Cart drawer (slides in from right) ===== -->
+    <div class="overlay" id="overlay" hidden></div>
+
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+        <div class="cart-drawer__head">
+            <h2>Your cart</h2>
+            <button class="icon-btn" id="cartClose" aria-label="Close cart">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+        </div>
+
+        <div class="cart-drawer__items" id="cartItems">
+            <p class="cart-empty">Your cart is empty. Add a product to get started.</p>
+        </div>
+
+        <div class="cart-drawer__foot">
+            <div class="cart-total">
+                <span>Subtotal</span>
+                <strong id="cartTotal">₹0</strong>
+            </div>
+            <a href="checkout.html" class="btn btn--primary btn--block">Go to checkout</a>
+        </div>
+    </aside>
+
+    <!-- Toast message (for "Added to cart") -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Back to top -->
+    <button class="to-top" id="toTop" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+
+    <!-- JavaScript (we create this in Day 3) -->
+    <script src="script.js" defer></script>
+</body>
+</html>

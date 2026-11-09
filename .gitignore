@@ -1,0 +1,16 @@
+# Python and Django
+venv/
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Secrets and uploads
+.env
+media/
+
+# Editor and system files
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/
