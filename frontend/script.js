@@ -462,3 +462,83 @@ $$("[data-count]").forEach((el) => {
 
     requestAnimationFrame(step);
 });
+
+/* =====================================================
+   13. Header account menu (shows the signed-in user)
+   ===================================================== */
+const AUTH_KEY = "shopsphere-auth";
+
+function getAuth() {
+    try {
+        return JSON.parse(localStorage.getItem(AUTH_KEY));
+    } catch {
+        return null;
+    }
+}
+
+function clearAuth() {
+    try {
+        localStorage.removeItem(AUTH_KEY);
+    } catch {
+        /* ignore */
+    }
+}
+
+function setupAccount() {
+    const accountLink = $('.header__actions a[href="login.html"]');
+    const auth = getAuth();
+    if (!accountLink || !auth || !auth.token) return;
+
+    const name = auth.user.name || "Account";
+    const initial = name.trim().charAt(0).toUpperCase();
+
+    const wrap = document.createElement("div");
+    wrap.className = "account";
+    wrap.innerHTML = `
+        <button type="button" class="account__btn" id="accountBtn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ${escapeHTML(name)}">
+            <span class="account__avatar">${escapeHTML(initial)}</span>
+        </button>
+        <div class="account__menu" id="accountMenu" hidden>
+            <p class="account__name">${escapeHTML(name)}</p>
+            <p class="account__email">${escapeHTML(auth.user.email)}</p>
+            <button type="button" class="account__logout" id="accountLogout">Log out</button>
+        </div>`;
+    accountLink.replaceWith(wrap);
+
+    const button = $("#accountBtn");
+    const menu = $("#accountMenu");
+
+    function setMenuOpen(open) {
+        menu.hidden = !open;
+        button.setAttribute("aria-expanded", open);
+    }
+
+    button.addEventListener("click", () => setMenuOpen(menu.hidden));
+
+    /* Click outside, or press Escape, to close the menu */
+    document.addEventListener("click", (event) => {
+        if (!wrap.contains(event.target)) setMenuOpen(false);
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setMenuOpen(false);
+    });
+
+    $("#accountLogout").addEventListener("click", () => {
+        clearAuth();
+        location.reload();
+    });
+
+    /* Ask the server if the token is still valid. If it is not, sign out. */
+    fetch(`${API_BASE}/auth/me/`, { headers: { Authorization: `Token ${auth.token}` } })
+        .then((response) => {
+            if (response.status === 401) {
+                clearAuth();
+                location.reload();
+            }
+        })
+        .catch(() => {
+            /* server not running: keep the saved login for now */
+        });
+}
+
+setupAccount();

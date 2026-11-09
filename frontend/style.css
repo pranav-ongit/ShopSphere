@@ -1454,3 +1454,75 @@ h3 {
     background: var(--muted);
     cursor: not-allowed;
 }
+
+/* ---------- Header account menu (added in Day 10) ---------- */
+.account {
+    position: relative;
+}
+
+.account__btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+}
+
+.account__avatar {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: background 0.2s;
+}
+
+.account__btn:hover .account__avatar {
+    background: var(--gold);
+}
+
+.account__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 120;
+    min-width: 220px;
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    animation: dropDown 0.25s var(--ease);
+}
+
+.account__name {
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.3;
+}
+
+.account__email {
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.account__logout {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.account__logout:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
