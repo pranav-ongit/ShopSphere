@@ -1433,3 +1433,24 @@ h3 {
         scroll-behavior: auto !important;
     }
 }
+
+/* ---------- API states (added in Day 9) ---------- */
+.grid-message {
+    grid-column: 1 / -1;
+    padding: 48px 0;
+    text-align: center;
+    color: var(--muted);
+}
+
+.badge--sold {
+    background: var(--muted);
+}
+
+.product.is-soldout .product__media img {
+    opacity: 0.55;
+}
+
+.btn:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+}

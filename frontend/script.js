@@ -1,10 +1,14 @@
 /* =====================================================
-   ShopSphere - script.js
-   Handles: header, menu, search, cart, filters,
-   wishlist, countdown, newsletter, scroll helpers
+   ShopSphere - script.js  (Day 9: connected to Django API)
+   Handles: header, menu, search, products from API, cart,
+   filters, wishlist, countdown, newsletter, scroll helpers
    ===================================================== */
 
 "use strict";
+
+/* The address of our Django backend.
+   When we deploy, we will change only this one line. */
+const API_BASE = "http://127.0.0.1:8000/api";
 
 /* ---------- Helpers ---------- */
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -13,7 +17,7 @@ const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)]
 const formatPrice = (number) => "₹" + number.toLocaleString("en-IN");
 
 const escapeHTML = (text) =>
-    text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 /* Safe wrappers around localStorage (it can fail in private mode) */
 const store = {
@@ -90,7 +94,6 @@ function setMenu(open) {
 
 menuToggle.addEventListener("click", () => setMenu(!nav.classList.contains("is-open")));
 
-/* Close the menu after choosing a link */
 $$(".nav__link").forEach((link) => link.addEventListener("click", () => setMenu(false)));
 
 /* =====================================================
@@ -140,7 +143,6 @@ searchForm.addEventListener("submit", (event) => {
         if (show) matches++;
     });
 
-    /* Reset filter buttons so the user sees search results, not a filter */
     $$(".filter").forEach((btn) => btn.classList.remove("is-active"));
 
     setSearch(false);
@@ -165,38 +167,41 @@ $$(".filter").forEach((btn) => btn.addEventListener("click", () => applyFilter(b
 $$(".category").forEach((card) => card.addEventListener("click", () => applyFilter(card.dataset.category)));
 
 /* =====================================================
-   7. Wishlist hearts
+   7. Wishlist
    ===================================================== */
 const wishlist = new Set(store.get("shopsphere-wishlist", []));
 
-$$(".product").forEach((product) => {
-    const button = $(".wishlist", product);
+/* Show the correct heart state on whatever cards are on the page */
+function syncWishlistButtons() {
+    $$(".product", productGrid).forEach((product) => {
+        $(".wishlist", product).setAttribute("aria-pressed", wishlist.has(product.dataset.id));
+    });
+}
+
+function toggleWishlist(product) {
     const id = product.dataset.id;
     const name = $(".product__name", product).textContent;
+    const added = !wishlist.has(id);
 
-    button.setAttribute("aria-pressed", wishlist.has(id));
-
-    button.addEventListener("click", () => {
-        const added = !wishlist.has(id);
-        added ? wishlist.add(id) : wishlist.delete(id);
-        button.setAttribute("aria-pressed", added);
-        store.set("shopsphere-wishlist", [...wishlist]);
-        showToast(added ? `${name} saved to wishlist` : `${name} removed from wishlist`);
-    });
-});
+    added ? wishlist.add(id) : wishlist.delete(id);
+    $(".wishlist", product).setAttribute("aria-pressed", added);
+    store.set("shopsphere-wishlist", [...wishlist]);
+    showToast(added ? `${name} saved to wishlist` : `${name} removed from wishlist`);
+}
 
 /* =====================================================
    8. Shopping cart
    ===================================================== */
-let cart = store.get("shopsphere-cart", []);
+/* The "-v2" in the name starts a fresh cart, because product ids now
+   come from the database instead of from the HTML. */
+let cart = store.get("shopsphere-cart-v2", []);
 let lastFocused = null;
 
 function saveCart() {
-    store.set("shopsphere-cart", cart);
+    store.set("shopsphere-cart-v2", cart);
 }
 
 function renderCart() {
-    /* Items */
     if (cart.length === 0) {
         cartItemsBox.innerHTML = '<p class="cart-empty">Your cart is empty. Add a product to get started.</p>';
     } else {
@@ -204,7 +209,7 @@ function renderCart() {
             .map(
                 (item) => `
             <div class="cart-item" data-id="${item.id}">
-                <img class="cart-item__img" src="${escapeHTML(item.image)}" alt="" width="72" height="72">
+                ${item.image ? `<img class="cart-item__img" src="${escapeHTML(item.image)}" alt="" width="72" height="72">` : '<span class="cart-item__img"></span>'}
                 <div class="cart-item__info">
                     <h3 class="cart-item__name">${escapeHTML(item.name)}</h3>
                     <p class="cart-item__price">${formatPrice(item.price)}</p>
@@ -220,7 +225,6 @@ function renderCart() {
             .join("");
     }
 
-    /* Totals */
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     cartCount.textContent = totalQty;
@@ -231,7 +235,8 @@ function addToCart(product) {
     const id = product.dataset.id;
     const name = $(".product__name", product).textContent.trim();
     const price = parseInt($(".price", product).textContent.replace(/[^\d]/g, ""), 10);
-    const image = $(".product__media img", product).getAttribute("src");
+    const img = $(".product__media img", product);
+    const image = img ? img.getAttribute("src") : "";
 
     const existing = cart.find((item) => item.id === id);
     if (existing) {
@@ -243,20 +248,27 @@ function addToCart(product) {
     saveCart();
     renderCart();
 
-    /* Little bounce on the cart badge */
     cartCount.classList.remove("is-bump");
-    void cartCount.offsetWidth; /* restart the animation */
+    void cartCount.offsetWidth;
     cartCount.classList.add("is-bump");
 
     showToast(`${name} added to cart`);
 }
 
-/* Add to cart buttons */
-$$("[data-add]").forEach((button) =>
-    button.addEventListener("click", () => addToCart(button.closest(".product")))
-);
+/* One click listener for the whole product grid (event delegation).
+   It keeps working even when the cards are created by JavaScript. */
+productGrid.addEventListener("click", (event) => {
+    const product = event.target.closest(".product");
+    if (!product) return;
 
-/* Quantity and remove buttons (event delegation) */
+    if (event.target.closest(".wishlist")) {
+        toggleWishlist(product);
+    } else if (event.target.closest("[data-add]")) {
+        addToCart(product);
+    }
+});
+
+/* Quantity and remove buttons inside the cart */
 cartItemsBox.addEventListener("click", (event) => {
     const button = event.target.closest("[data-action]");
     if (!button) return;
@@ -274,7 +286,6 @@ cartItemsBox.addEventListener("click", (event) => {
     renderCart();
 });
 
-/* Open and close the drawer */
 function setCart(open) {
     cartDrawer.classList.toggle("is-open", open);
     cartDrawer.setAttribute("aria-hidden", !open);
@@ -294,7 +305,6 @@ cartToggle.addEventListener("click", () => setCart(true));
 cartClose.addEventListener("click", () => setCart(false));
 overlay.addEventListener("click", () => setCart(false));
 
-/* Escape key closes the drawer, search and menu */
 document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     if (cartDrawer.classList.contains("is-open")) setCart(false);
@@ -305,12 +315,79 @@ document.addEventListener("keydown", (event) => {
 renderCart();
 
 /* =====================================================
-   9. Sale countdown
+   9. Products from the Django API  (the new part)
+   ===================================================== */
+
+/* Turns one product object from the API into the HTML of one card */
+function productCard(p) {
+    const price = Number(p.price);
+    const oldPrice = p.old_price ? Number(p.old_price) : 0;
+    const discount = oldPrice > price ? Math.round((1 - price / oldPrice) * 100) : 0;
+    const soldOut = p.stock === 0;
+    const name = escapeHTML(p.name);
+    const category = p.category || { name: "", slug: "" };
+
+    let badge = "";
+    if (soldOut) badge = '<span class="badge badge--sold">Sold out</span>';
+    else if (discount) badge = `<span class="badge badge--sale">-${discount}%</span>`;
+
+    return `
+    <article class="product${soldOut ? " is-soldout" : ""}" data-category="${escapeHTML(category.slug)}" data-id="${p.id}">
+        <div class="product__media">
+            ${badge}
+            <button class="wishlist" aria-label="Add ${name} to wishlist" aria-pressed="${wishlist.has(String(p.id))}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+            </button>
+            ${p.image ? `<img src="${escapeHTML(p.image)}" alt="${name}" loading="lazy" width="400" height="400">` : ""}
+            <button class="btn btn--primary product__quick" data-add ${soldOut ? "disabled" : ""}>${soldOut ? "Sold out" : "Add to cart"}</button>
+        </div>
+        <div class="product__body">
+            <p class="product__category">${escapeHTML(category.name)}</p>
+            <h3 class="product__name">${name}</h3>
+            <p class="product__price">
+                <span class="price">${formatPrice(price)}</span>
+                ${oldPrice > price ? `<s class="price price--old">${formatPrice(oldPrice)}</s>` : ""}
+            </p>
+        </div>
+    </article>`;
+}
+
+/* Asks the backend for the featured products and shows them */
+async function loadProducts() {
+    /* Keep the sample cards from index.html as a backup */
+    const backupHTML = productGrid.innerHTML;
+    productGrid.innerHTML = '<p class="grid-message">Loading products…</p>';
+
+    try {
+        const response = await fetch(`${API_BASE}/products/?featured=true`);
+        if (!response.ok) throw new Error("Server answered with status " + response.status);
+
+        const data = await response.json();
+        const products = Array.isArray(data) ? data : data.results;
+
+        if (!products.length) {
+            productGrid.innerHTML = '<p class="grid-message">No products yet. Add some in the admin panel.</p>';
+            return;
+        }
+
+        productGrid.innerHTML = products.map(productCard).join("");
+        console.log(`Loaded ${products.length} products from the API`, products);
+    } catch (error) {
+        console.error("Could not load products from the API:", error);
+        productGrid.innerHTML = backupHTML;
+        syncWishlistButtons();
+        showToast("Server not reachable. Showing sample products.");
+    }
+}
+
+loadProducts();
+
+/* =====================================================
+   10. Sale countdown
    ===================================================== */
 const DAY = 24 * 60 * 60 * 1000;
 let saleEnd = store.get("shopsphere-sale-end", 0);
 
-/* Start a 5-day sale the first time, and restart it when it ends */
 if (!saleEnd || saleEnd < Date.now()) {
     saleEnd = Date.now() + 5 * DAY;
     store.set("shopsphere-sale-end", saleEnd);
@@ -344,7 +421,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 
 /* =====================================================
-   10. Newsletter form
+   11. Newsletter form
    ===================================================== */
 const newsletterForm = $("#newsletterForm");
 const newsletterEmail = $("#newsletterEmail");
@@ -369,7 +446,7 @@ newsletterForm.addEventListener("submit", (event) => {
 });
 
 /* =====================================================
-   11. Hero numbers count up once
+   12. Hero numbers count up once
    ===================================================== */
 $$("[data-count]").forEach((el) => {
     const target = Number(el.dataset.count);
