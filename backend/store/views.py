@@ -5,10 +5,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Category, Product
+from .models import Category, Product, Order
 from .serializers import (
     CategorySerializer, ProductSerializer,
     RegisterSerializer, UserSerializer,
+    OrderSerializer, PlaceOrderSerializer,
 )
 
 
@@ -77,3 +78,29 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+
+class OrderListCreateView(generics.ListCreateAPIView):
+    """GET: the signed-in user's orders. POST: place a new order."""
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).prefetch_related('items')
+
+    def get_serializer_class(self):
+        return PlaceOrderSerializer if self.request.method == 'POST' else OrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = PlaceOrderSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        return Response(OrderSerializer(order).data, status=201)
+
+
+class OrderDetailView(generics.RetrieveAPIView):
+    """One order. Users can only open their own."""
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).prefetch_related('items')

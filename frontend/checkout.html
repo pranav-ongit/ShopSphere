@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ShopSphere</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body class="checkout-page">
+
+    <header class="checkout-header">
+        <div class="container checkout-header__inner">
+            <a href="index.html" class="logo" aria-label="ShopSphere home">
+                <svg class="logo__mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+                    <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <ellipse cx="14" cy="14" rx="5" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="logo__text">ShopSphere</span>
+            </a>
+            <a href="index.html" class="link-arrow">Back to shop</a>
+        </div>
+    </header>
+
+    <main class="container checkout">
+
+        <!-- Main checkout view -->
+        <div id="checkoutView" hidden>
+            <h1 class="checkout__title">Checkout</h1>
+
+            <div class="checkout__grid">
+
+                <form id="checkoutForm" class="checkout-form" novalidate>
+                    <h2 class="checkout__heading">Delivery details</h2>
+
+                    <div class="field">
+                        <label for="fullName">Full name</label>
+                        <input type="text" id="fullName" name="full_name" autocomplete="name" required>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="phone">Phone number</label>
+                            <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="numeric" placeholder="9876543210" required>
+                        </div>
+                        <div class="field">
+                            <label for="pincode">Pincode</label>
+                            <input type="text" id="pincode" name="pincode" autocomplete="postal-code" inputmode="numeric" maxlength="6" placeholder="416001" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" autocomplete="street-address" placeholder="House number, street, area" required>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" autocomplete="address-level2" required>
+                        </div>
+                        <div class="field">
+                            <label for="state">State</label>
+                            <input type="text" id="state" name="state" autocomplete="address-level1" required>
+                        </div>
+                    </div>
+
+                    <h2 class="checkout__heading">Payment</h2>
+                    <p class="payment-note">
+                        <strong>Demo mode.</strong> No real payment is taken. Your order is saved as pending, and payment will be added later in test mode.
+                    </p>
+
+                    <button type="submit" class="btn btn--primary btn--block" id="placeOrderBtn">Place order</button>
+                    <p class="form-message" id="checkoutMessage" role="status" aria-live="polite"></p>
+                </form>
+
+                <aside class="summary" aria-label="Order summary">
+                    <h2 class="checkout__heading">Order summary</h2>
+                    <ul class="summary__items" id="summaryItems"></ul>
+                    <div class="summary__total">
+                        <span>Total</span>
+                        <strong id="summaryTotal">₹0</strong>
+                    </div>
+                    <p class="summary__note">The final total is calculated by our server when you place the order.</p>
+                </aside>
+
+            </div>
+        </div>
+
+        <!-- Shown when the cart is empty or the person is not signed in -->
+        <section class="state-box" id="stateBox" hidden>
+            <h1 class="checkout__title" id="stateTitle"></h1>
+            <p id="stateText"></p>
+            <a href="index.html" class="btn btn--primary" id="stateButton"></a>
+        </section>
+
+        <!-- Shown after the order is placed -->
+        <section class="confirmation" id="confirmation" hidden>
+            <div class="confirmation__icon" aria-hidden="true">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            </div>
+            <h1 class="checkout__title">Thank you for your order</h1>
+            <p class="confirmation__text" id="confirmText"></p>
+
+            <ul class="summary__items confirmation__items" id="confirmItems"></ul>
+            <div class="summary__total">
+                <span>Total</span>
+                <strong id="confirmTotal"></strong>
+            </div>
+
+            <a href="index.html" class="btn btn--primary">Continue shopping</a>
+        </section>
+
+    </main>
+
+    <script src="checkout.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+/* =====================================================
+   ShopSphere - checkout.css
+   Uses colours and fonts from style.css, and the
+   form field styles from auth.css
+   ===================================================== */
+
+.checkout-page {
+    background: var(--bg);
+}
+
+.checkout-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+}
+
+.checkout-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+}
+
+.checkout {
+    padding-block: clamp(32px, 5vw, 64px) 96px;
+}
+
+.checkout__title {
+    margin-bottom: 28px;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    letter-spacing: -0.01em;
+}
+
+.checkout__heading {
+    margin-bottom: 18px;
+    font-size: 1.3rem;
+}
+
+.checkout__grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr;
+    align-items: start;
+    gap: clamp(24px, 4vw, 56px);
+}
+
+/* ---------- Form card ---------- */
+.checkout-form,
+.summary {
+    padding: clamp(22px, 3vw, 36px);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+}
+
+.checkout-form .checkout__heading:not(:first-child) {
+    margin-top: 30px;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.payment-note {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    background: var(--tint);
+    border-radius: var(--radius-s);
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+.payment-note strong {
+    color: var(--navy);
+}
+
+.checkout-form .form-message {
+    margin-top: 14px;
+    text-align: center;
+}
+
+/* ---------- Order summary ---------- */
+.summary {
+    position: sticky;
+    top: 24px;
+}
+
+.summary__items {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.summary__item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 14px;
+}
+
+.summary__item img,
+.summary__thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: var(--radius-s);
+    background: var(--tint);
+}
+
+.summary__name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--navy);
+}
+
+.summary__qty {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.summary__price {
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.summary__total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 1.15rem;
+}
+
+.summary__total strong {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    color: var(--navy);
+}
+
+.summary__note {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+
+/* ---------- Empty cart, signed out and confirmation ---------- */
+.state-box,
+.confirmation {
+    max-width: 560px;
+    margin: 40px auto 0;
+    padding: clamp(28px, 5vw, 48px);
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    animation: fadeIn 0.6s both;
+}
+
+.state-box p,
+.confirmation__text {
+    margin-bottom: 26px;
+    color: var(--muted);
+}
+
+.confirmation__icon {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--success);
+    color: var(--white);
+    animation: pop 0.6s var(--ease) both;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+}
+
+.confirmation__items {
+    margin-top: 8px;
+    text-align: left;
+}
+
+.confirmation .summary__total {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+/* ---------- Tablets and phones ---------- */
+@media (max-width: 860px) {
+    .checkout__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .field-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
