@@ -141,6 +141,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5501',
     'http://localhost:5501',
 ]
+
+# Development only: accept the website on any local port
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^http://(127\.0\.0\.1|localhost):\d+$',
+]
+
 # How the API recognises logged-in users
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

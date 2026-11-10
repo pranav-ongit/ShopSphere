@@ -21,9 +21,26 @@ class OrderItemInline(admin.TabularInline):
     extra = 0
 
 
+@admin.action(description='Mark selected orders as paid')
+def mark_paid(modeladmin, request, queryset):
+    queryset.update(status=Order.Status.PAID)
+
+
+@admin.action(description='Mark selected orders as shipped')
+def mark_shipped(modeladmin, request, queryset):
+    queryset.update(status=Order.Status.SHIPPED)
+
+
+@admin.action(description='Mark selected orders as delivered')
+def mark_delivered(modeladmin, request, queryset):
+    queryset.update(status=Order.Status.DELIVERED)
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'status', 'total', 'created_at')
+    list_editable = ('status',)
     list_filter = ('status',)
     search_fields = ('user__email', 'full_name')
     inlines = [OrderItemInline]
+    actions = [mark_paid, mark_shipped, mark_delivered]

@@ -1526,3 +1526,26 @@ h3 {
     border-color: var(--danger);
     color: var(--danger);
 }
+
+/* ---------- My orders links (added in Day 11) ---------- */
+.account__link {
+    display: block;
+    padding: 10px 0;
+    margin-bottom: 8px;
+    border-top: 1px solid var(--line);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--navy);
+    transition: color 0.2s;
+}
+
+.account__link:hover {
+    color: var(--gold-dark);
+}
+
+.confirmation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}

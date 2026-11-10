@@ -498,9 +498,10 @@ function setupAccount() {
         <button type="button" class="account__btn" id="accountBtn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ${escapeHTML(name)}">
             <span class="account__avatar">${escapeHTML(initial)}</span>
         </button>
-        <div class="account__menu" id="accountMenu" hidden>
+              <div class="account__menu" id="accountMenu" hidden>
             <p class="account__name">${escapeHTML(name)}</p>
             <p class="account__email">${escapeHTML(auth.user.email)}</p>
+            <a class="account__link" href="orders.html">My orders</a>
             <button type="button" class="account__logout" id="accountLogout">Log out</button>
         </div>`;
     accountLink.replaceWith(wrap);

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My orders - ShopSphere</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="checkout.css">
+    <link rel="stylesheet" href="orders.css">
+</head>
+
+<body class="checkout-page">
+
+    <header class="checkout-header">
+        <div class="container checkout-header__inner">
+            <a href="index.html" class="logo" aria-label="ShopSphere home">
+                <svg class="logo__mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+                    <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <ellipse cx="14" cy="14" rx="5" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="logo__text">ShopSphere</span>
+            </a>
+            <a href="index.html" class="link-arrow">Back to shop</a>
+        </div>
+    </header>
+
+    <main class="container checkout">
+
+        <!-- The list of orders -->
+        <div id="ordersView">
+            <h1 class="checkout__title">My orders</h1>
+            <p class="orders__loading" id="ordersLoading">Loading your orders…</p>
+            <div class="orders" id="ordersList"></div>
+        </div>
+
+        <!-- Shown when signed out, when there are no orders, or on an error -->
+        <section class="state-box" id="stateBox" hidden>
+            <h1 class="checkout__title" id="stateTitle"></h1>
+            <p id="stateText"></p>
+            <a href="index.html" class="btn btn--primary" id="stateButton"></a>
+        </section>
+
+    </main>
+
+    <script src="orders.js" defer></script>
+</body>
+</html>
