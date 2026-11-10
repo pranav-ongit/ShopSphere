@@ -1,0 +1,134 @@
+/* =====================================================
+   ShopSphere - products.css
+   All products page. Uses the tokens and the card
+   styles from style.css
+   ===================================================== */
+
+.shop-hero {
+    padding: clamp(36px, 6vw, 64px) 0 8px;
+}
+
+.shop-hero h1 {
+    margin-bottom: 8px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.01em;
+}
+
+.shop-hero p {
+    color: var(--muted);
+}
+
+.shop-section {
+    padding: 20px 0 clamp(56px, 8vw, 96px);
+}
+
+/* ---------- Search and sort ---------- */
+.shop-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 24px 0 20px;
+}
+
+.search-field {
+    position: relative;
+    flex: 1 1 280px;
+    max-width: 440px;
+}
+
+.search-field svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.search-field input {
+    width: 100%;
+    padding: 13px 20px 13px 48px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-field input:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(20, 33, 61, 0.08);
+}
+
+.sort-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.sort-field select {
+    padding: 11px 38px 11px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--navy);
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+.sort-field select:focus {
+    border-color: var(--navy);
+}
+
+/* ---------- Results ---------- */
+.shop__count {
+    min-height: 1.5em;
+    margin: 20px 0 24px;
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+.shop-page .product {
+    animation: fadeIn 0.5s both;
+}
+
+.shop-page .grid-message .btn {
+    margin-top: 16px;
+}
+
+.shop-page .product.is-soldout .product__media img {
+    opacity: 0.55;
+}
+
+/* ---------- Footer ---------- */
+.shop-footer {
+    border-top: 1px solid var(--line);
+    background: var(--white);
+}
+
+.shop-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 24px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+@media (max-width: 560px) {
+    .sort-field {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .search-field {
+        max-width: none;
+    }
+}

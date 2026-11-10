@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,8 +19,24 @@ class CategoryListView(generics.ListAPIView):
     serializer_class = CategorySerializer
 
 
+class ProductPagination(PageNumberPagination):
+    """Sends products in pages: ?page=2&page_size=8"""
+    page_size = 8
+    page_size_query_param = 'page_size'
+    max_page_size = 24
+
+
 class ProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
+    pagination_class = ProductPagination
+
+    # ?sort=newest | price_asc | price_desc | name
+    SORTS = {
+        'newest': ('-created_at', '-id'),
+        'price_asc': ('price', 'id'),
+        'price_desc': ('-price', '-id'),
+        'name': ('name', 'id'),
+    }
 
     def get_queryset(self):
         queryset = Product.objects.select_related('category')
@@ -27,6 +44,7 @@ class ProductListView(generics.ListAPIView):
         category = self.request.query_params.get('category')
         featured = self.request.query_params.get('featured')
         search = self.request.query_params.get('search')
+        sort = self.request.query_params.get('sort', 'newest')
 
         if category:
             queryset = queryset.filter(category__slug=category)
@@ -35,7 +53,7 @@ class ProductListView(generics.ListAPIView):
         if search:
             queryset = queryset.filter(name__icontains=search)
 
-        return queryset
+        return queryset.order_by(*self.SORTS.get(sort, self.SORTS['newest']))
 
 
 class ProductDetailView(generics.RetrieveAPIView):
