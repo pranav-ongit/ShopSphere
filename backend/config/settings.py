@@ -10,23 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
+from dotenv import load_dotenv
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=^#xcp^=)pzu()&n9c+vgnbn^#_x9#poauo5fg-pgy7m*j0#hx'
-
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only-change-me')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
 
 # Application definition
 
@@ -140,13 +142,14 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5500',
     'http://127.0.0.1:5501',
     'http://localhost:5501',
-]
+] + [o.strip() for o in os.environ.get('CORS_EXTRA_ORIGINS', '').split(',') if o.strip()]
 
 # Development only: accept the website on any local port
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^http://(127\.0\.0\.1|localhost):\d+$',
-]
-
+if DEBUG:    
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r'^http://(127\.0\.0\.1|localhost):\d+$',
+    ]
+    
 # How the API recognises logged-in users
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
