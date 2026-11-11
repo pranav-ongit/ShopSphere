@@ -1,4 +1,6 @@
 from django.contrib.auth import authenticate
+from django.db.models import Avg, Count
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination
@@ -6,12 +8,21 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Category, Product, Order
+from .models import Category, Product, Order, Review
 from .serializers import (
     CategorySerializer, ProductSerializer,
     RegisterSerializer, UserSerializer,
     OrderSerializer, PlaceOrderSerializer,
+    ReviewSerializer, ReviewInputSerializer,
 )
+
+
+def with_ratings(queryset):
+    """Adds the average rating and the number of reviews to each product."""
+    return queryset.annotate(
+        avg_rating=Avg('reviews__rating'),
+        review_count=Count('reviews'),
+    )
 
 
 class CategoryListView(generics.ListAPIView):
@@ -39,7 +50,7 @@ class ProductListView(generics.ListAPIView):
     }
 
     def get_queryset(self):
-        queryset = Product.objects.select_related('category')
+        queryset = with_ratings(Product.objects.select_related('category'))
 
         category = self.request.query_params.get('category')
         featured = self.request.query_params.get('featured')
@@ -52,7 +63,7 @@ class ProductListView(generics.ListAPIView):
         if featured == 'true':
             queryset = queryset.filter(is_featured=True)
         if search:
-            queryset = queryset.filter(name__icontains=search) 
+            queryset = queryset.filter(name__icontains=search)
         if ids:
             id_list = [int(i) for i in ids.split(',') if i.strip().isdigit()]
             queryset = queryset.filter(id__in=id_list)
@@ -61,9 +72,50 @@ class ProductListView(generics.ListAPIView):
 
 
 class ProductDetailView(generics.RetrieveAPIView):
-    queryset = Product.objects.select_related('category')
+    queryset = with_ratings(Product.objects.select_related('category'))
     serializer_class = ProductSerializer
     lookup_field = 'slug'
+
+
+class ReviewPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 20
+
+
+class ProductReviewsView(generics.ListCreateAPIView):
+    """GET: reviews of one product (public). POST: write or update your review."""
+    pagination_class = ReviewPagination
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def get_product(self):
+        return get_object_or_404(Product, slug=self.kwargs['slug'])
+
+    def get_queryset(self):
+        return Review.objects.filter(product=self.get_product()).select_related('user', 'product')
+
+    def get_serializer_class(self):
+        return ReviewInputSerializer if self.request.method == 'POST' else ReviewSerializer
+
+    def create(self, request, *args, **kwargs):
+        product = self.get_product()
+        serializer = ReviewInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # One review per person per product: posting again updates it
+        review, created = Review.objects.update_or_create(
+            product=product,
+            user=request.user,
+            defaults={
+                'rating': serializer.validated_data['rating'],
+                'comment': serializer.validated_data.get('comment', '').strip(),
+            },
+        )
+        return Response(ReviewSerializer(review).data, status=201 if created else 200)
 
 
 class RegisterView(APIView):

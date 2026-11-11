@@ -191,6 +191,7 @@ function productCard(p, index) {
         <div class="product__body">
             <p class="product__category">${escapeHTML(category.name)}</p>
             <h3 class="product__name"><a href="${link}">${name}</a></h3>
+            ${p.review_count ? `<p class="rating"><span class="rating__stars" aria-hidden="true">★</span> ${Number(p.rating).toFixed(1)} <span class="rating__count">(${p.review_count})</span></p>` : ""}
             <p class="product__price">
                 <span class="price">${formatPrice(price)}</span>
                 ${oldPrice > price ? `<s class="price price--old">${formatPrice(oldPrice)}</s>` : ""}

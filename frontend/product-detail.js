@@ -1,7 +1,7 @@
 /* =====================================================
    ShopSphere - product-detail.js
-   Loads one product from GET /api/products/<slug>/
-   and shows related products from the same category
+   One product page: details, quantity, cart, wishlist,
+   reviews (read and write) and related products
    ===================================================== */
 
 "use strict";
@@ -37,7 +37,22 @@ const store = {
             /* ignore */
         }
     },
+    remove(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch {
+            /* ignore */
+        }
+    },
 };
+
+/* Collects every text message out of an API error answer */
+function flatten(value) {
+    if (typeof value === "string") return [value];
+    if (Array.isArray(value)) return value.flatMap(flatten);
+    if (value && typeof value === "object") return Object.values(value).flatMap(flatten);
+    return [];
+}
 
 /* ---------- Element references ---------- */
 const header = $("#header");
@@ -49,6 +64,10 @@ const detailBox = $("#productDetail");
 const breadcrumb = $("#breadcrumb");
 const relatedSection = $("#related");
 const relatedGrid = $("#relatedGrid");
+const reviewsSection = $("#reviews");
+const reviewList = $("#reviewList");
+const reviewFormBox = $("#reviewFormBox");
+const loadMoreReviews = $("#loadMoreReviews");
 
 /* =====================================================
    1. Toast, header, menu and account icon
@@ -152,6 +171,21 @@ const heartIcon =
 const tickIcon =
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+/* Five stars, filled up to the rating (works for 4.3 as well as 4) */
+function starsHTML(rating) {
+    return `<span class="stars" style="--rating:${Number(rating)}" role="img" aria-label="${Number(rating)} out of 5 stars">★★★★★</span>`;
+}
+
+function ratingSummary(p) {
+    if (!p.review_count) {
+        return '<a href="#reviews" class="pd__rating">No reviews yet</a>';
+    }
+    const word = p.review_count === 1 ? "review" : "reviews";
+    return `<a href="#reviews" class="pd__rating">
+        ${starsHTML(p.rating)} <strong>${Number(p.rating).toFixed(1)}</strong> <span>(${p.review_count} ${word})</span>
+    </a>`;
+}
+
 function showNotFound(title, text) {
     document.title = "Product not found - ShopSphere";
     detailBox.innerHTML = `
@@ -195,6 +229,7 @@ function renderProduct(p) {
         <div class="pd__info">
             <a class="pd__category" href="products.html?category=${encodeURIComponent(category.slug)}">${escapeHTML(category.name)}</a>
             <h1 class="pd__name">${escapeHTML(p.name)}</h1>
+            <div id="ratingSummary">${ratingSummary(p)}</div>
 
             <p class="pd__price">
                 <span class="pd__now">${formatPrice(price)}</span>
@@ -282,7 +317,186 @@ function renderProduct(p) {
 }
 
 /* =====================================================
-   4. Related products (same category, not this one)
+   4. Reviews: reading, writing and the form
+   ===================================================== */
+let currentSlug = "";
+let reviewPage = 1;
+
+function reviewItem(r, index) {
+    const date = new Date(r.created_at).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
+    const comment = r.comment
+        ? `<p class="review-item__text">${escapeHTML(r.comment).replace(/\n/g, "<br>")}</p>`
+        : "";
+
+    return `
+    <li class="review-item" style="animation-delay: ${index * 60}ms">
+        <div class="review-item__head">
+            ${starsHTML(r.rating)}
+            <span class="review-item__name">${escapeHTML(r.name)}</span>
+            ${r.verified ? `<span class="verified">${tickIcon.replace('width="20" height="20"', 'width="12" height="12"')} Verified purchase</span>` : ""}
+            <span class="review-item__date">${date}</span>
+        </div>
+        ${comment}
+    </li>`;
+}
+
+async function loadReviews(append = false) {
+    if (!append) reviewPage = 1;
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/products/${encodeURIComponent(currentSlug)}/reviews/?page=${reviewPage}&page_size=5`
+        );
+        if (!response.ok) throw new Error("Server answered with status " + response.status);
+
+        const data = await response.json();
+
+        if (!append) reviewList.innerHTML = "";
+
+        if (!data.results.length && !append) {
+            reviewList.innerHTML = '<li class="review-empty">No reviews yet. Be the first to share your thoughts.</li>';
+            loadMoreReviews.hidden = true;
+            return;
+        }
+
+        reviewList.insertAdjacentHTML("beforeend", data.results.map(reviewItem).join(""));
+        loadMoreReviews.hidden = !data.next;
+    } catch (error) {
+        console.error("Could not load reviews:", error);
+        if (append) {
+            reviewPage -= 1;
+            showToast("Could not load more reviews. Please try again.");
+        } else {
+            reviewList.innerHTML = '<li class="review-empty">Could not load reviews right now.</li>';
+        }
+    }
+}
+
+loadMoreReviews.addEventListener("click", () => {
+    reviewPage += 1;
+    loadReviews(true);
+});
+
+/* After a new review, refresh the average rating under the title */
+async function refreshSummary() {
+    try {
+        const response = await fetch(`${API_BASE}/products/${encodeURIComponent(currentSlug)}/`);
+        if (!response.ok) return;
+        const product = await response.json();
+        const box = $("#ratingSummary");
+        if (box) box.innerHTML = ratingSummary(product);
+    } catch {
+        /* the old summary stays */
+    }
+}
+
+function renderReviewForm() {
+    if (!auth || !auth.token) {
+        reviewFormBox.innerHTML = `
+            <h3>Write a review</h3>
+            <p>Sign in to share your rating and thoughts about this product.</p>
+            <a href="login.html" class="btn btn--primary btn--block">Sign in to review</a>`;
+        return;
+    }
+
+    reviewFormBox.innerHTML = `
+        <h3>Write a review</h3>
+        <form class="review-form" id="reviewForm" novalidate>
+            <fieldset class="star-input">
+                <legend>Your rating</legend>
+                <div class="star-input__row">
+                    <input type="radio" name="rating" id="star5" value="5"><label for="star5" title="5 stars">★<span class="visually-hidden">5 stars</span></label>
+                    <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 stars">★<span class="visually-hidden">4 stars</span></label>
+                    <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 stars">★<span class="visually-hidden">3 stars</span></label>
+                    <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 stars">★<span class="visually-hidden">2 stars</span></label>
+                    <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 star">★<span class="visually-hidden">1 star</span></label>
+                </div>
+            </fieldset>
+
+            <label class="field-label" for="reviewComment">Your review (optional)</label>
+            <textarea id="reviewComment" name="comment" maxlength="1000" placeholder="What did you like or dislike?"></textarea>
+
+            <button type="submit" class="btn btn--primary btn--block">Submit review</button>
+            <p class="form-message" id="reviewMessage" role="status" aria-live="polite"></p>
+            <p class="review-form__hint">You can change your review later by submitting this form again.</p>
+        </form>`;
+}
+
+function setReviewMessage(text, type) {
+    const box = $("#reviewMessage");
+    if (!box) return;
+    box.textContent = text;
+    box.classList.toggle("is-error", type === "error");
+    box.classList.toggle("is-success", type === "success");
+}
+
+reviewFormBox.addEventListener("submit", async (event) => {
+    if (!event.target.matches("#reviewForm")) return;
+    event.preventDefault();
+
+    const form = event.target;
+    const rating = form.rating.value;
+    const comment = form.comment.value.trim();
+
+    if (!rating) {
+        setReviewMessage("Please choose a star rating.", "error");
+        return;
+    }
+
+    const button = $('button[type="submit"]', form);
+    button.disabled = true;
+    button.textContent = "Saving…";
+    setReviewMessage("", "");
+
+    try {
+        const response = await fetch(`${API_BASE}/products/${encodeURIComponent(currentSlug)}/reviews/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${auth.token}`,
+            },
+            body: JSON.stringify({ rating: Number(rating), comment }),
+        });
+
+        const result = await response.json().catch(() => null);
+
+        if (response.status === 401) {
+            store.remove(AUTH_KEY);
+            setReviewMessage("Your sign-in has expired. Please sign in again.", "error");
+            return;
+        }
+
+        if (!response.ok) {
+            setReviewMessage(flatten(result).join(" ") || "Something went wrong. Please try again.", "error");
+            return;
+        }
+
+        setReviewMessage(response.status === 201 ? "Thank you! Your review has been added." : "Your review has been updated.", "success");
+        await loadReviews();
+        refreshSummary();
+    } catch (error) {
+        console.error("Review request failed:", error);
+        setReviewMessage("Cannot reach the server. Is the backend running?", "error");
+    } finally {
+        button.disabled = false;
+        button.textContent = "Submit review";
+    }
+});
+
+function initReviews(slug) {
+    currentSlug = slug;
+    reviewsSection.hidden = false;
+    renderReviewForm();
+    loadReviews();
+}
+
+/* =====================================================
+   5. Related products (same category, not this one)
    ===================================================== */
 function relatedCard(p, index) {
     const price = Number(p.price);
@@ -300,6 +514,7 @@ function relatedCard(p, index) {
         <div class="product__body">
             <p class="product__category">${escapeHTML(p.category ? p.category.name : "")}</p>
             <h3 class="product__name"><a href="${link}">${name}</a></h3>
+            ${p.review_count ? `<p class="rating"><span class="rating__stars" aria-hidden="true">★</span> ${Number(p.rating).toFixed(1)} <span class="rating__count">(${p.review_count})</span></p>` : ""}
             <p class="product__price">
                 <span class="price">${formatPrice(price)}</span>
                 ${oldPrice > price ? `<s class="price price--old">${formatPrice(oldPrice)}</s>` : ""}
@@ -329,7 +544,7 @@ async function loadRelated(product) {
 }
 
 /* =====================================================
-   5. Start: read the slug from the address and load
+   6. Start: read the slug from the address and load
    ===================================================== */
 async function loadProduct() {
     const slug = new URLSearchParams(location.search).get("slug");
@@ -350,6 +565,7 @@ async function loadProduct() {
 
         const product = await response.json();
         renderProduct(product);
+        initReviews(slug);
         loadRelated(product);
     } catch (error) {
         console.error("Could not load the product:", error);

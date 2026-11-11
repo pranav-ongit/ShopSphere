@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="products.css">
     <link rel="stylesheet" href="product-detail.css">
+    <link rel="stylesheet" href="reviews.css">
 </head>
 
 <body class="shop-page">
@@ -70,6 +71,22 @@
         <div id="productDetail">
             <p class="grid-message">Loading product…</p>
         </div>
+
+        <!-- Customer reviews -->
+        <section class="reviews-section" id="reviews" hidden aria-labelledby="reviews-title">
+            <h2 class="section__title" id="reviews-title">Customer reviews</h2>
+
+            <div class="reviews-layout">
+                <div>
+                    <ul class="review-list" id="reviewList"></ul>
+                    <div class="reviews-more">
+                        <button type="button" class="btn btn--outline" id="loadMoreReviews" hidden>Show more reviews</button>
+                    </div>
+                </div>
+
+                <aside class="review-form-card" id="reviewFormBox"></aside>
+            </div>
+        </section>
 
         <!-- Related products -->
         <section class="related" id="related" hidden aria-labelledby="related-title">

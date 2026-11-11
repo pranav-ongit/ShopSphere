@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
 from rest_framework import serializers
-from .models import Category, Product, Order, OrderItem
+from .models import Category, Product, Order, OrderItem, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -15,13 +15,24 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = [
             'id', 'name', 'slug', 'description', 'price',
             'old_price', 'image', 'stock', 'is_featured', 'category',
+            'rating', 'review_count',
         ]
+
+    # avg_rating and review_count are added by the views (see with_ratings)
+    def get_rating(self, obj):
+        value = getattr(obj, 'avg_rating', None)
+        return round(value, 1) if value else None
+
+    def get_review_count(self, obj):
+        return getattr(obj, 'review_count', 0)
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -147,3 +158,35 @@ class PlaceOrderSerializer(serializers.Serializer):
             order.save(update_fields=['total'])
 
         return order
+
+
+# ---------- Reviews ----------
+
+class ReviewSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    verified = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'rating', 'comment', 'name', 'verified', 'created_at']
+
+    def get_name(self, obj):
+        # Show the first name and the first letter of the last name only
+        parts = (obj.user.first_name or 'Customer').split()
+        if len(parts) > 1:
+            return f'{parts[0]} {parts[-1][0]}.'
+        return parts[0]
+
+    def get_verified(self, obj):
+        # A verified review comes from someone who really ordered this product
+        return (
+            OrderItem.objects
+            .filter(order__user=obj.user, product=obj.product)
+            .exclude(order__status=Order.Status.CANCELLED)
+            .exists()
+        )
+
+
+class ReviewInputSerializer(serializers.Serializer):
+    rating = serializers.IntegerField(min_value=1, max_value=5)
+    comment = serializers.CharField(required=False, allow_blank=True, max_length=1000)
