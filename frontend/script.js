@@ -338,12 +338,12 @@ function productCard(p) {
             <button class="wishlist" aria-label="Add ${name} to wishlist" aria-pressed="${wishlist.has(String(p.id))}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
             </button>
-            ${p.image ? `<img src="${escapeHTML(p.image)}" alt="${name}" loading="lazy" width="400" height="400">` : ""}
+            ${p.image ? `<a class="product__link" href="product-detail.html?slug=${encodeURIComponent(p.slug)}" tabindex="-1" aria-hidden="true"><img src="${escapeHTML(p.image)}" alt="${name}" loading="lazy" width="400" height="400"></a>` : ""}
             <button class="btn btn--primary product__quick" data-add ${soldOut ? "disabled" : ""}>${soldOut ? "Sold out" : "Add to cart"}</button>
         </div>
         <div class="product__body">
             <p class="product__category">${escapeHTML(category.name)}</p>
-            <h3 class="product__name">${name}</h3>
+            <h3 class="product__name"><a href="product-detail.html?slug=${encodeURIComponent(p.slug)}">${name}</a></h3>
             <p class="product__price">
                 <span class="price">${formatPrice(price)}</span>
                 ${oldPrice > price ? `<s class="price price--old">${formatPrice(oldPrice)}</s>` : ""}

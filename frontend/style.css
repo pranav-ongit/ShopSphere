@@ -1549,3 +1549,18 @@ h3 {
     justify-content: center;
     gap: 12px;
 }
+
+/* ---------- Product links (added in Day 12) ---------- */
+.product__link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.product__name a {
+    transition: color 0.2s;
+}
+
+.product__name a:hover {
+    color: var(--gold-dark);
+}
