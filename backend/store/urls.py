@@ -3,6 +3,7 @@ from .views import (
     CategoryListView, ProductListView, ProductDetailView, ProductReviewsView,
     RegisterView, LoginView, MeView,
     OrderListCreateView, OrderDetailView,
+    AssistantView,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('auth/me/', MeView.as_view()),
     path('orders/', OrderListCreateView.as_view()),
     path('orders/<int:pk>/', OrderDetailView.as_view()),
+    path('assistant/', AssistantView.as_view()),
 ]

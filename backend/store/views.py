@@ -7,6 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.throttling import AnonRateThrottle
+from .assistant import answer
 
 from .models import Category, Product, Order, Review
 from .serializers import (
@@ -178,3 +180,28 @@ class OrderDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).prefetch_related('items')
+    
+class AssistantThrottle(AnonRateThrottle):
+    rate = '30/min'
+
+
+class AssistantView(APIView):
+    """POST {"message": "..."} and get a reply with product suggestions."""
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    throttle_classes = [AssistantThrottle]
+
+    def post(self, request):
+        message = str(request.data.get('message', '')).strip()[:300]
+        if not message:
+            return Response({'detail': 'Please type a message.'}, status=400)
+
+        result = answer(message)
+        products = ProductSerializer(
+            result['products'], many=True, context={'request': request}
+        ).data
+        return Response({
+            'reply': result['reply'],
+            'products': products,
+            'suggestions': result['suggestions'],
+        })

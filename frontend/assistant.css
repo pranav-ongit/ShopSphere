@@ -1,0 +1,349 @@
+/* =====================================================
+   ShopSphere - assistant.css
+   The shopping assistant chat widget.
+   Uses the colours and fonts from style.css
+   ===================================================== */
+
+.assistant {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    z-index: 140;
+    font-family: var(--font-body);
+}
+
+/* ---------- Launcher button ---------- */
+.assistant__launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px 14px 18px;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.92rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-m);
+    transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+}
+
+.assistant__launcher svg {
+    color: var(--gold);
+}
+
+.assistant__launcher:hover {
+    background: var(--navy-soft);
+    transform: translateY(-2px);
+}
+
+.assistant.is-open .assistant__launcher {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---------- Panel ---------- */
+.assistant__panel {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    width: min(380px, calc(100vw - 32px));
+    height: min(560px, calc(100vh - 48px));
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    box-shadow: 0 24px 60px rgba(20, 33, 61, 0.22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(18px) scale(0.97);
+    transform-origin: bottom left;
+    transition: opacity 0.3s var(--ease), transform 0.35s var(--ease), visibility 0s 0.35s;
+}
+
+.assistant.is-open .assistant__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.3s var(--ease), transform 0.35s var(--ease), visibility 0s;
+}
+
+.assistant__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--navy);
+    color: var(--white);
+}
+
+.assistant__head strong {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    line-height: 1.2;
+}
+
+.assistant__head span {
+    font-size: 0.8rem;
+    color: #cfd3dc;
+}
+
+.assistant__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--white);
+    transition: background 0.2s;
+}
+
+.assistant__close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- Messages ---------- */
+.assistant__messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    overflow-y: auto;
+    background: var(--bg);
+}
+
+.assistant-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 92%;
+    animation: fadeIn 0.35s both;
+}
+
+.assistant-msg--user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.assistant-msg--bot {
+    align-self: flex-start;
+}
+
+.assistant-msg__bubble {
+    padding: 11px 15px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.assistant-msg--user .assistant-msg__bubble {
+    background: var(--navy);
+    color: var(--white);
+    border-bottom-right-radius: 6px;
+}
+
+.assistant-msg--bot .assistant-msg__bubble {
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-bottom-left-radius: 6px;
+}
+
+/* Product cards inside a reply */
+.assistant-msg__cards {
+    display: grid;
+    gap: 8px;
+}
+
+.assistant-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    transition: border-color 0.2s, transform 0.2s var(--ease);
+}
+
+.assistant-card:hover {
+    border-color: var(--navy);
+    transform: translateX(3px);
+}
+
+.assistant-card img,
+.assistant-card__thumb {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: var(--radius-s);
+    background: var(--tint);
+}
+
+.assistant-card__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.assistant-card__info strong {
+    font-size: 0.92rem;
+    color: var(--navy);
+}
+
+.assistant-card__price {
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.assistant-card__price s {
+    margin-left: 6px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.assistant-card__rating {
+    color: var(--gold-dark);
+    font-size: 0.8rem;
+}
+
+/* Typing dots */
+.assistant-typing {
+    display: inline-flex;
+    gap: 5px;
+    padding: 14px 16px;
+}
+
+.assistant-typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: assistantDot 1.1s infinite ease-in-out;
+}
+
+.assistant-typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.assistant-typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes assistantDot {
+    0%,
+    60%,
+    100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-4px);
+    }
+}
+
+/* ---------- Suggestion chips ---------- */
+.assistant__chips {
+    display: flex;
+    gap: 8px;
+    padding: 10px 18px;
+    overflow-x: auto;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    scrollbar-width: none;
+}
+
+.assistant__chips::-webkit-scrollbar {
+    display: none;
+}
+
+.assistant__chip {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--navy);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.assistant__chip:hover {
+    border-color: var(--navy);
+    background: var(--tint);
+}
+
+/* ---------- Input ---------- */
+.assistant__form {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    background: var(--bg);
+}
+
+.assistant__form input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.assistant__form input:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(20, 33, 61, 0.08);
+}
+
+.assistant__form button {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    transition: background 0.2s;
+}
+
+.assistant__form button:hover:not(:disabled) {
+    background: var(--gold);
+}
+
+.assistant__form button:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+}
+
+/* ---------- Phones: the panel fills the width ---------- */
+@media (max-width: 560px) {
+    .assistant {
+        left: 16px;
+        bottom: 16px;
+    }
+
+    .assistant__launcher span {
+        display: none;
+    }
+
+    .assistant__launcher {
+        padding: 16px;
+    }
+
+    .assistant__panel {
+        width: calc(100vw - 32px);
+        height: min(560px, calc(100vh - 32px));
+    }
+}
