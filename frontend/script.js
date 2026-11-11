@@ -501,7 +501,8 @@ function setupAccount() {
               <div class="account__menu" id="accountMenu" hidden>
             <p class="account__name">${escapeHTML(name)}</p>
             <p class="account__email">${escapeHTML(auth.user.email)}</p>
-            <a class="account__link" href="orders.html">My orders</a>
+            <a class="account__link" href="orders.html">My orders</a> 
+            <a class="account__link" href="wishlist.html">Wishlist</a>
             <button type="button" class="account__logout" id="accountLogout">Log out</button>
         </div>`;
     accountLink.replaceWith(wrap);

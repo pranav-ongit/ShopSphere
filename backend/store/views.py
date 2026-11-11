@@ -45,13 +45,17 @@ class ProductListView(generics.ListAPIView):
         featured = self.request.query_params.get('featured')
         search = self.request.query_params.get('search')
         sort = self.request.query_params.get('sort', 'newest')
+        ids = self.request.query_params.get('ids')
 
         if category:
             queryset = queryset.filter(category__slug=category)
         if featured == 'true':
             queryset = queryset.filter(is_featured=True)
         if search:
-            queryset = queryset.filter(name__icontains=search)
+            queryset = queryset.filter(name__icontains=search) 
+        if ids:
+            id_list = [int(i) for i in ids.split(',') if i.strip().isdigit()]
+            queryset = queryset.filter(id__in=id_list)
 
         return queryset.order_by(*self.SORTS.get(sort, self.SORTS['newest']))
 
